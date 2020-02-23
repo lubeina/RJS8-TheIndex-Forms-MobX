@@ -1,12 +1,18 @@
 import { decorate, observable, computed } from "mobx";
 import { instance } from "./instance";
 
+function errToArray(err) {
+  return Object.keys(err).map(key => `${key}: ${err[key]}`);
+}
+
 class BookStore {
   books = [];
 
   query = "";
 
   loading = true;
+
+  errors = null;
 
   fetchBooks = async () => {
     try {
@@ -15,6 +21,18 @@ class BookStore {
       this.books = books;
       this.loading = false;
     } catch (err) {}
+  };
+
+  addBook = async (newBook, author) => {
+    try {
+      const res = await instance.post("books/", newBook);
+      const book = res.data;
+      this.books.unshift(book);
+      author.books.push(book.id);
+      this.errors = null;
+    } catch (err) {
+      this.errors = errToArray(err.response.data);
+    }
   };
 
   get filteredBooks() {
