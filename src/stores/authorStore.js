@@ -1,9 +1,5 @@
 import { decorate, observable, computed } from "mobx";
-import axios from "axios";
-
-const instance = axios.create({
-  baseURL: "https://the-index-api.herokuapp.com/api/"
-});
+import { instance } from "./instance";
 
 function errToArray(err) {
   return Object.keys(err).map(key => `${key}: ${err[key]}`);
